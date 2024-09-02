@@ -1,32 +1,19 @@
-pipeline{
-	agent any
-	parameters {
-  choice choices: ['DEV', 'QA', 'UAT'], name: 'ENVIRONMENT'
-}
-	triggers {
-  pollSCM '* * * * *'
-}
-
-	stages{
-		stage(checkout){
-			steps{
-			git 'https://github.com/thekrishna-2001/GRRAS1.git'
-			}
-		}
-		stage(build){
-			steps{
-				sh 'mvn install'
-			}
-		}
-		stage(deploy){
-			steps{
-			script{	sh '''if [ $ENVIRONMENT = "QA" ];then
-                                        cp target/GRRAS1.war /home/swapnil/Documents/DevOps-Software/apache-tomcat-9.0.79/webapps
-                                elif  [ $ENVIRONMENT = "UAT" ];then
-                                         cp target/GRRAS1.war /home/swapnil/Documents/DevOps-Software/apache-tomcat-9.0.79/webapps
-                                echo "deployment has been done!"
-                                fi'''}
-	
-	}			}
-		}
+pipeline {
+	agent{
+	label 'new-label'
 	}
+	stages {
+	    stage('Checkout') {
+	        steps {
+			checkout scm			       
+		      }}
+		stage('Build') {
+	           steps {
+			  sh 'JAVA_HOME=/home/newgrras/newgrrasdir/jdk-11.0.24 /home/newgrras/newgrrasdir/apache-maven-3.9.8/mvn install'
+	                 }}
+		stage('Deployment'){
+		    steps {
+			sh 'cp target/orator.war /home/newgrras/newgrrasdir/apache-tomcat-9.0.93/webapps'
+			}}	
+}}
+
